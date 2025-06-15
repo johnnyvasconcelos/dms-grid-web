@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grid Interativo</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #controls {
+        padding: 10px;
+        background: #eee;
+        display: flex;
+        gap: 10px;
+      }
+
+      #grid {
+        background-size: cover;
+        background-image: url(./assets/background.jpeg);
+        flex: 1;
+        display: grid;
+        width: 100%;
+        height: 100%;
+      }
+
+      .cell {
+        border: 1px solid #ccc;
+        position: relative;
+        aspect-ratio: 1 / 1;
+      }
+
+      .token {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        cursor: grab;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <button onclick="changeGridSize(-1)">Aumentar Grid</button>
+      <button onclick="changeGridSize(1)">Diminuir Grid</button>
+    </div>
+
+    <div id="grid"></div>
+
+    <script>
+      let gridSize = 6; // Começa com 6x6
+      const grid = document.getElementById("grid");
+
+      let draggedToken = null;
+
+      // Lista de tokens que você quer adicionar
+      const tokenSources = [
+        "assets/token-1.png",
+        "assets/token-2.png",
+        "assets/token-3.png",
+        "assets/token-4.png",
+      ];
+
+      // Função para criar um token
+      function createToken(src) {
+        const token = document.createElement("img");
+        token.src = src;
+        token.classList.add("token");
+        token.setAttribute("draggable", "true");
+
+        token.addEventListener("dragstart", (e) => {
+          draggedToken = e.target;
+          setTimeout(() => (draggedToken.style.display = "none"), 0);
+        });
+
+        token.addEventListener("dragend", () => {
+          draggedToken.style.display = "block";
+          draggedToken = null;
+        });
+
+        return token;
+      }
+
+      function createGrid() {
+        grid.innerHTML = "";
+        grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        const totalCells = gridSize * gridSize;
+
+        for (let i = 0; i < totalCells; i++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          cell.addEventListener("dragover", (e) => {
+            // Só permite arrastar sobre a célula se ela estiver vazia
+            if (!cell.querySelector(".token")) {
+              e.preventDefault();
+            }
+          });
+
+          cell.addEventListener("drop", () => {
+            if (draggedToken && !cell.querySelector(".token")) {
+              cell.appendChild(draggedToken);
+            }
+          });
+
+          grid.appendChild(cell);
+        }
+
+        // Posiciona os tokens nas primeiras células livres
+        tokenSources.forEach((src, index) => {
+          const token = createToken(src);
+          const emptyCell = Array.from(grid.children).find(
+            (cell) => !cell.hasChildNodes()
+          );
+          if (emptyCell) emptyCell.appendChild(token);
+        });
+      }
+
+      function changeGridSize(delta) {
+        gridSize = Math.max(2, Math.min(16, gridSize + delta));
+        createGrid();
+      }
+
+      createGrid();
+    </script>
+  </body>
+</html>
