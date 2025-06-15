@@ -133,6 +133,40 @@
         createGrid();
       }
 
+      // Suporte a toque (mobile)
+      grid.addEventListener(
+        "touchstart",
+        (e) => {
+          const touch = e.touches[0];
+          const touchedElement = document.elementFromPoint(
+            touch.clientX,
+            touch.clientY
+          );
+
+          if (touchedElement && touchedElement.classList.contains("token")) {
+            draggedToken = touchedElement;
+          }
+        },
+        { passive: false }
+      );
+
+      grid.addEventListener("touchend", (e) => {
+        if (!draggedToken) return;
+
+        const touch = e.changedTouches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+        if (
+          target &&
+          target.classList.contains("cell") &&
+          !target.querySelector(".token")
+        ) {
+          target.appendChild(draggedToken);
+        }
+
+        draggedToken = null;
+      });
+
       createGrid();
     </script>
   </body>
