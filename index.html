@@ -175,8 +175,40 @@
 
         draggedToken = null;
       });
+function animateTokenMove(token, targetCell) {
+  const startRect = token.getBoundingClientRect();
+  const endRect = targetCell.getBoundingClientRect();
 
+  const deltaX = endRect.left - startRect.left;
+  const deltaY = endRect.top - startRect.top;
+
+  const clone = token.cloneNode(true);
+  clone.style.position = "fixed";
+  clone.style.left = startRect.left + "px";
+  clone.style.top = startRect.top + "px";
+  clone.style.width = startRect.width + "px";
+  clone.style.height = startRect.height + "px";
+  clone.style.transition = "transform 0.3s ease";
+  clone.style.pointerEvents = "none";
+  document.body.appendChild(clone);
+
+  // Oculta o token original temporariamente
+  token.style.visibility = "hidden";
+
+  // Força reflow para aplicar a transição
+  requestAnimationFrame(() => {
+    clone.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+    // Após a transição
+    setTimeout(() => {
+      targetCell.appendChild(token);
+      token.style.visibility = "visible";
+      document.body.removeChild(clone);
+    }, 300);
+  });
+}
       createGrid();
+
     </script>
   </body>
 </html>
