@@ -156,3 +156,49 @@ function animateTokenMove(token, targetCell) {
   });
 }
 createGrid();
+
+const btn = document.getElementById("btnMoverFundo");
+
+let modoMovimento = false;
+let isDragging = false;
+let startX, startY;
+let posX = 50;
+let posY = 50;
+
+btn.addEventListener("click", () => {
+  modoMovimento = !modoMovimento;
+  btn.textContent = modoMovimento ? "Parar de Mover" : "Mover Fundo";
+  grid.style.cursor = modoMovimento ? "grab" : "default";
+});
+
+grid.addEventListener("mousedown", (e) => {
+  if (!modoMovimento) return;
+  isDragging = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  grid.style.cursor = "grabbing";
+});
+
+document.addEventListener("mouseup", () => {
+  if (!modoMovimento) return;
+  isDragging = false;
+  grid.style.cursor = "grab";
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!modoMovimento || !isDragging) return;
+
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
+
+  posX += dx * 0.1;
+  posY += dy * 0.1;
+
+  posX = Math.max(0, Math.min(100, posX));
+  posY = Math.max(0, Math.min(100, posY));
+
+  grid.style.backgroundPosition = `${posX}% ${posY}%`;
+
+  startX = e.clientX;
+  startY = e.clientY;
+});
