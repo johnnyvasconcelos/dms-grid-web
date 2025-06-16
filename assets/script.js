@@ -170,7 +170,6 @@ btn.addEventListener("click", () => {
   grid.style.cursor = modoMovimento ? "grab" : "default";
 });
 
-// 🖱️ Suporte a mouse
 grid.addEventListener("mousedown", (e) => {
   if (!modoMovimento) return;
   isDragging = true;
@@ -190,7 +189,6 @@ document.addEventListener("mousemove", (e) => {
   moverFundo(e.clientX, e.clientY);
 });
 
-// 🤳 Suporte a touch
 grid.addEventListener("touchstart", (e) => {
   if (!modoMovimento) return;
   isDragging = true;
@@ -210,12 +208,11 @@ grid.addEventListener(
     if (!modoMovimento || !isDragging) return;
     const touch = e.touches[0];
     moverFundo(touch.clientX, touch.clientY);
-    e.preventDefault(); // impede scroll da página
+    e.preventDefault();
   },
   { passive: false }
 );
 
-// 🧠 Função que move o fundo (usada por mouse e touch)
 function moverFundo(currentX, currentY) {
   const dx = currentX - startX;
   const dy = currentY - startY;
