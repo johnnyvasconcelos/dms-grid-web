@@ -156,7 +156,6 @@ function animateTokenMove(token, targetCell) {
   });
 }
 createGrid();
-
 const btn = document.getElementById("btnMoverFundo");
 
 let modoMovimento = false;
@@ -167,10 +166,11 @@ let posY = 50;
 
 btn.addEventListener("click", () => {
   modoMovimento = !modoMovimento;
-  btn.textContent = modoMovimento ? "Parar de Mover" : "Mover Fundo";
+  btn.textContent = modoMovimento ? "Parar de Mover Fundo" : "Mover Fundo";
   grid.style.cursor = modoMovimento ? "grab" : "default";
 });
 
+// 🖱️ Suporte a mouse
 grid.addEventListener("mousedown", (e) => {
   if (!modoMovimento) return;
   isDragging = true;
@@ -187,9 +187,38 @@ document.addEventListener("mouseup", () => {
 
 document.addEventListener("mousemove", (e) => {
   if (!modoMovimento || !isDragging) return;
+  moverFundo(e.clientX, e.clientY);
+});
 
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
+// 🤳 Suporte a touch
+grid.addEventListener("touchstart", (e) => {
+  if (!modoMovimento) return;
+  isDragging = true;
+  const touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
+});
+
+grid.addEventListener("touchend", () => {
+  if (!modoMovimento) return;
+  isDragging = false;
+});
+
+grid.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!modoMovimento || !isDragging) return;
+    const touch = e.touches[0];
+    moverFundo(touch.clientX, touch.clientY);
+    e.preventDefault(); // impede scroll da página
+  },
+  { passive: false }
+);
+
+// 🧠 Função que move o fundo (usada por mouse e touch)
+function moverFundo(currentX, currentY) {
+  const dx = currentX - startX;
+  const dy = currentY - startY;
 
   posX += dx * 0.1;
   posY += dy * 0.1;
@@ -199,6 +228,6 @@ document.addEventListener("mousemove", (e) => {
 
   grid.style.backgroundPosition = `${posX}% ${posY}%`;
 
-  startX = e.clientX;
-  startY = e.clientY;
-});
+  startX = currentX;
+  startY = currentY;
+}
