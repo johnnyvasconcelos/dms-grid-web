@@ -77,12 +77,12 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(211, 49, 92, 0.4); /* vermelho transparente */
+  background-color: rgba(211, 49, 92, 0.4);
   pointer-events: none;
   z-index: 5;
   border-radius: 4px;
 }
 
 .cell {
-  position: relative; /* necessário para posicionar a overlay */
+  position: relative;
 }

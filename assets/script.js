@@ -51,11 +51,11 @@ function createGrid(savedTokenPositions = []) {
     cell.addEventListener("dblclick", () => {
       let overlay = cell.querySelector(".cell-overlay");
       if (overlay) {
-        overlay.remove(); // Toggle OFF
+        overlay.remove();
       } else {
         overlay = document.createElement("div");
         overlay.classList.add("cell-overlay");
-        cell.appendChild(overlay); // Toggle ON
+        cell.appendChild(overlay);
       }
     });
   }
